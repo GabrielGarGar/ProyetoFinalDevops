@@ -6,7 +6,39 @@ on:
       - main
 
 jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install build & twine
+      run: |
+        pip install --upgrade build twine
+
+    - name: Build package
+      run: |
+        python -m build
+
+    - name: List build output
+      run: |
+        ls -la
+        ls -la dist
+    
+    - name: Upload package to nexus PyPI
+      env:
+        TWINE_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      run: |
+        twine upload --repository-url "${{ secrets.NEXUS_URL }}" dist/*.tar.gz dist/*.whl
+
   deploy:
+    needs: build-and-publish
     runs-on: ubuntu-latest
 
     steps:
@@ -33,29 +65,4 @@ jobs:
           docker-compose down
           docker-compose build --no-cache
           docker-compose up -d
-
-    - name: Set up python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: install build & twine
-      run: |
-        pip install --upgrade build twine
-
-    - name: build package
-      run: |
-        python -m build
-
-    - name: list build output
-      run: |
-        ls -la
-        ls -la dist
-    
-    - name: Upload package to nexus PyPI
-      env:
-        TWINE_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-      run: |
-        twine upload --repository-url "${{ secrets.NEXUS_URL }}" dist/*.tar.gz dist/*whl
 

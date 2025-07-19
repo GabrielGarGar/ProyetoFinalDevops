@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "devops-final-app"
+version = "1.0.0"
+description = "FastAPI application with Prometheus metrics"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "prometheus_client",
+]
+
+[project.urls]
+Homepage = "https://github.com/GabrielGarGar/ProyetoFinalDevops"
+Repository = "https://github.com/GabrielGarGar/ProyetoFinalDevops"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["*.yml", "*.yaml"]
