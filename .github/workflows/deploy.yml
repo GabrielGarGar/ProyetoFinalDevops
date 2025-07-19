@@ -30,12 +30,20 @@ jobs:
         ls -la
         ls -la dist
     
+    - name: Debug Nexus connection
+      env:
+        NEXUS_URL: ${{ secrets.NEXUS_URL }}
+      run: |
+        echo "Nexus URL: $NEXUS_URL"
+        echo "Testing connection to Nexus..."
+        curl -I "$NEXUS_URL" || echo "Connection failed"
+    
     - name: Upload package to nexus PyPI
       env:
         TWINE_USERNAME: ${{ secrets.NEXUS_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
       run: |
-        twine upload --repository-url "${{ secrets.NEXUS_URL }}" dist/*.tar.gz dist/*.whl
+        twine upload --verbose --repository-url "${{ secrets.NEXUS_URL }}" dist/*.tar.gz dist/*.whl
 
   deploy:
     needs: build-and-publish
